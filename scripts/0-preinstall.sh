@@ -61,9 +61,10 @@ sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' ${DISK} # partition 1 (BIOS Boot Partition)
 sgdisk -n 2::+1G --typecode=2:ef00 --change-name=2:'EFIBOOT' ${DISK} # partition 2 (UEFI Boot Partition)
 sgdisk -n 3::-200G --typecode=3:8300 --change-name=3:'ROOT' ${DISK} # partition 3 (Root), default start, remaining
-if [[ ! -d "/sys/firmware/efi" ]]; then # Checking for bios system
-    sgdisk -A 1:set:2 ${DISK}
-fi
+sgdisk -A 1:set:2 ${DISK}
+# if [[ ! -d "/sys/firmware/efi" ]]; then # Checking for bios system
+#     sgdisk -A 1:set:2 ${DISK}
+# fi
 partprobe ${DISK} # reread partition table to ensure it is correct
 
 # make filesystems
@@ -178,8 +179,8 @@ if [[ ! -d "/sys/firmware/efi" ]]; then
 else
     pacstrap /mnt efibootmgr --noconfirm --needed
     #ithinkitsgood
-    #grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB --recheck
-    grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi --bootloader-id=GRUB --recheck
+    grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB --recheck
+    #grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi --bootloader-id=GRUB --recheck
 
 fi
 
